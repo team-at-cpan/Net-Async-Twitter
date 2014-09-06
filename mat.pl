@@ -269,13 +269,13 @@ $matrix->start;
 					next unless exists $_->{text};
 					say Dumper($_) unless defined $_->{text};
 					say $_->{user}{screen_name} . ': ' . $_->{text};
-					if($global_room) {
-					my $f = $global_room->send_message(
-						$_->{user}{screen_name} . ': ' . $_->{text}
-						# body => 
-						# type => 'm.text',
-					);
-					$f->on_ready(sub { undef $f });
+					if($global_room && $_->{user}{screen_name} ne 'MatrixChat') {
+						my $f = $global_room->send_message(
+							$_->{user}{screen_name} . ': ' . $_->{text}
+							# body => 
+							# type => 'm.text',
+						);
+						$f->on_ready(sub { undef $f });
 					}
 				}
 			}
