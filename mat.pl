@@ -190,9 +190,11 @@ $loop->add(my $matrix = Net::Async::Matrix->new(
       my ( $self, $room ) = @_;
 	  warn "new room - $room\n";
 	  $global_room = $room if $room->name =~ /matrix:/;
+	  my $ready;
 	  $room->configure(
 	  	on_message => sub {
          my ( $self, $member, $content ) = @_;
+		 return unless $ready;
          my $user = $member->user;
 		 $user = $member->displayname // $user->user_id;
 		 my $msg = $user . ': ' . $content->{body} . ' #matrix';
@@ -211,7 +213,8 @@ $loop->add(my $matrix = Net::Async::Matrix->new(
 #			 my $f = twat($msg)->on_ready(sub { warn " - $msg finished\n" });
 #			$f->on_ready(sub { undef $f });
 		 }
-		}
+		},
+		on_synced_messages => sub { $ready = 1 },
 	  );
 	},
 
