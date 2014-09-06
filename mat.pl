@@ -271,8 +271,9 @@ $matrix->start;
 					say $_->{user}{screen_name} . ': ' . $_->{text};
 					if($global_room) {
 					my $f = $global_room->send_message(
-						type => 'text',
-						body => $_->{user}{screen_name} . ': ' . $_->{text}
+						$_->{user}{screen_name} . ': ' . $_->{text}
+						# body => 
+						# type => 'm.text',
 					);
 					$f->on_ready(sub { undef $f });
 					}
