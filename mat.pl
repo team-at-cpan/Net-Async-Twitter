@@ -190,8 +190,8 @@ $loop->add($matrix = Net::Async::Matrix->new(
 	on_log => sub {warn "log: @_\n" },
 	on_room_new => sub {
       my ( $self, $room ) = @_;
-	  warn "new room - $room\n";
-	  $global_room = $room if $room->name =~ /matrix:/;
+	  warn "new room - $room with name " . $room->name . "\n";
+	  $global_room ||= $room;# if $room->name =~ /matrix:/;
 	  my $ready;
 	  $room->configure(
 	  	on_message => sub {
@@ -269,7 +269,7 @@ $matrix->start;
 					next unless exists $_->{text};
 					say Dumper($_) unless defined $_->{text};
 					say $_->{user}{screen_name} . ': ' . $_->{text};
-					if(1) {
+					if($global_room) {
 					my $f = $global_room->send_message(
 						type => 'text',
 						body => $_->{user}{screen_name} . ': ' . $_->{text}
