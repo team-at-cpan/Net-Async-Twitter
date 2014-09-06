@@ -191,7 +191,7 @@ $loop->add($matrix = Net::Async::Matrix->new(
 	on_room_new => sub {
       my ( $self, $room ) = @_;
 	  warn "new room - $room with name " . $room->name . "\n";
-	  $global_room ||= $room;# if $room->name =~ /matrix:/;
+	  $global_room = $room if $room->name =~ /cURbafjkfsMDV/;
 	  my $ready;
 	  $room->configure(
 	  	on_message => sub {
