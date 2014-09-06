@@ -208,16 +208,16 @@ $loop->add($matrix = Net::Async::Matrix->new(
 		 	my $uri =$content->{url}; 
 			if(defined($uri)) {
 				warn "Posting image: $uri\n";
-#				my $f = twatpic($uri, $user)->on_ready(sub { warn " - $uri finished\n" });
-#				$f->on_ready(sub { undef $f });
+				my $f = twatpic($uri, $user)->on_ready(sub { warn " - $uri finished\n" });
+				$f->on_ready(sub { undef $f });
 			} else {
 				use Data::Dumper;
 				warn "dunno what this is: " . Dumper($content);
 			}
 		 } else {
 			warn "Posting message: $msg\n";
-#			 my $f = twat($msg)->on_ready(sub { warn " - $msg finished\n" });
-#			$f->on_ready(sub { undef $f });
+			 my $f = twat($msg)->on_ready(sub { warn " - $msg finished\n" });
+			$f->on_ready(sub { undef $f });
 		 }
 		},
 		on_synced_messages => sub { $ready = 1 },
