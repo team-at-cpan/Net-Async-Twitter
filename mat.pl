@@ -1,6 +1,7 @@
 #!/usr/bin/env perl 
 use strict;
 use warnings;
+use feature qw(say);
 use IO::Async::Loop;
 use Net::Async::Matrix;
 use Net::Async::Twitter;
@@ -177,6 +178,7 @@ sub twat {
 #twat('Hello World! #matrix');
 #exit 0;
 #
+my $global_room;
 $loop->add(my $matrix = Net::Async::Matrix->new(
 	user_id => '@twitter:perlsite.co.uk',
 	access_token => 'QHR3aXR0ZXI6cGVybHNpdGUuY28udWs..maahvOhGCQHBkvVivv',
@@ -187,6 +189,7 @@ $loop->add(my $matrix = Net::Async::Matrix->new(
 	on_room_new => sub {
       my ( $self, $room ) = @_;
 	  warn "new room - $room\n";
+	  $global_room = $room if $room->name =~ /matrix:/;
 	  $room->configure(
 	  	on_message => sub {
          my ( $self, $member, $content ) = @_;
@@ -197,16 +200,16 @@ $loop->add(my $matrix = Net::Async::Matrix->new(
 		 	my $uri =$content->{url}; 
 			if(defined($uri)) {
 				warn "Posting image: $uri\n";
-				my $f = twatpic($uri, $user)->on_ready(sub { warn " - $uri finished\n" });
-				$f->on_ready(sub { undef $f });
+#				my $f = twatpic($uri, $user)->on_ready(sub { warn " - $uri finished\n" });
+#				$f->on_ready(sub { undef $f });
 			} else {
 				use Data::Dumper;
 				warn "dunno what this is: " . Dumper($content);
 			}
 		 } else {
 			warn "Posting message: $msg\n";
-			 my $f = twat($msg)->on_ready(sub { warn " - $msg finished\n" });
-			$f->on_ready(sub { undef $f });
+#			 my $f = twat($msg)->on_ready(sub { warn " - $msg finished\n" });
+#			$f->on_ready(sub { undef $f });
 		 }
 		}
 	  );
@@ -223,5 +226,51 @@ sub log {
 }
 #my $f; $f = $matrix->join_room('#client_test:localhost')->on_ready(sub { warn "joined\n"; undef $f });;
 $matrix->start;
+
+{
+	my $uri = URI->new('https://userstream.twitter.com/1.1/user.json?replies=all');
+	my $req = HTTP::Request->new(GET => "$uri");
+	$req->protocol('HTTP/1.1');
+	# $req->header(Authorization => 'Bearer ' . $t->req);
+	my $hdr = $t->authorization_header(
+		method => 'GET',
+		uri => $uri,
+	);
+	$req->header('Authorization' => $hdr);
+	say "Had auth header: $hdr";
+	$req->header('Host' => $uri->host);
+	$req->header('User-Agent' => 'OAuth gem v0.4.4');
+	$req->header('Connection' => 'close');
+	$req->header('Accept' => '*/*');
+
+	say $req->as_string("\n");
+	binmode STDOUT, ':encoding(UTF-8)';
+
+	$ua->do_request(
+		request => $req,
+		on_header => sub {
+			my $hdr = shift;
+			say "Header: " . $hdr->code . " " . $hdr->message;
+			my $json = JSON::MaybeXS->new;
+			sub {
+				return unless @_;
+				my $data = shift;
+				my @found = $json->incr_parse($data);
+				for(@found) {
+					next unless exists $_->{text};
+					say Dumper($_) unless defined $_->{text};
+					say $_->{user}{screen_name} . ': ' . $_->{text};
+					if(0) {
+					my $f = $global_room->send_message(
+						type => 'text',
+						body => $_->{user}{screen_name} . ': ' . $_->{text}
+					);
+					$f->on_ready(sub { undef $f });
+					}
+				}
+			}
+		}
+	);
+}
 $loop->run;
 
