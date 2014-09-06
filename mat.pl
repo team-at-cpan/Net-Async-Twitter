@@ -2,6 +2,7 @@
 use strict;
 use warnings;
 use feature qw(say);
+use JSON::MaybeXS;
 use IO::Async::Loop;
 use Net::Async::Matrix;
 use Net::Async::Twitter;
