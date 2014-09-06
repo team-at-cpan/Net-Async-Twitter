@@ -198,6 +198,10 @@ $loop->add(my $matrix = Net::Async::Matrix->new(
 		 return unless $ready;
          my $user = $member->user;
 		 $user = $member->displayname // $user->user_id;
+		 if($user->user_id eq $self->myself->user_id) {
+		 	warn "this was from me, not posting: " . $content->{body};
+			return;
+		 }
 		 my $msg = $user . ': ' . $content->{body} . ' #matrix';
 		 if(ref $content->{body}) {
 		 	my $uri =$content->{url}; 
@@ -264,7 +268,7 @@ $matrix->start;
 					next unless exists $_->{text};
 					say Dumper($_) unless defined $_->{text};
 					say $_->{user}{screen_name} . ': ' . $_->{text};
-					if(0) {
+					if(1) {
 					my $f = $global_room->send_message(
 						type => 'text',
 						body => $_->{user}{screen_name} . ': ' . $_->{text}
