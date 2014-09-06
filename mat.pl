@@ -198,7 +198,7 @@ $loop->add(my $matrix = Net::Async::Matrix->new(
 		 return unless $ready;
          my $user = $member->user;
 		 $user = $member->displayname // $user->user_id;
-		 if($user->user_id eq $self->myself->user_id) {
+		 if($member->user->user_id eq $self->myself->user_id) {
 		 	warn "this was from me, not posting: " . $content->{body};
 			return;
 		 }
