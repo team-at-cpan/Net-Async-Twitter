@@ -178,9 +178,11 @@ sub twat {
 #exit 0;
 #
 $loop->add(my $matrix = Net::Async::Matrix->new(
-	user_id => '@twitterbot:localhost',
-	access_token => 'QHR3aXR0ZXJib3Q6bG9jYWxob3N0.GRfGcHVSnvsajvJUZt',
-	server => 'matrix.perlsite.co.uk',
+	user_id => '@twitter:perlsite.co.uk',
+	access_token => 'QHR3aXR0ZXI6cGVybHNpdGUuY28udWs..maahvOhGCQHBkvVivv',
+	server => 'matrix.perlsite.co.uk:443',
+	SSL => 1,
+	SSL_verify_mode => SSL_VERIFY_NONE,
 	on_log => sub {warn "log: @_\n" },
 	on_room_new => sub {
       my ( $self, $room ) = @_;
