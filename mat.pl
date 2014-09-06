@@ -180,7 +180,8 @@ sub twat {
 #exit 0;
 #
 my $global_room;
-$loop->add(my $matrix = Net::Async::Matrix->new(
+my $matrix;
+$loop->add($matrix = Net::Async::Matrix->new(
 	user_id => '@twitter:perlsite.co.uk',
 	access_token => 'QHR3aXR0ZXI6cGVybHNpdGUuY28udWs..maahvOhGCQHBkvVivv',
 	server => 'matrix.perlsite.co.uk:443',
@@ -194,7 +195,7 @@ $loop->add(my $matrix = Net::Async::Matrix->new(
 	  my $ready;
 	  $room->configure(
 	  	on_message => sub {
-         my ( $self, $member, $content ) = @_;
+         my ( $room, $member, $content ) = @_;
 		 return unless $ready;
          my $user = $member->user;
 		 $user = $member->displayname // $user->user_id;
