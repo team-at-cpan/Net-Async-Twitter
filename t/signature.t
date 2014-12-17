@@ -5,6 +5,8 @@ use Test::More;
 use Test::Deep;
 use Net::Async::Twitter;
 
+# Test data from twitter.com official examples
+
 my $t = new_ok('Net::Async::Twitter' => [
 	consumer_key => 'xvz1evFS4wEEPTGEFPHBog',
 	consumer_secret => 'kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw',

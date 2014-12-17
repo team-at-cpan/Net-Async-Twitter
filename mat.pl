@@ -11,6 +11,9 @@ use URI::Escape qw(uri_escape_utf8);
 use IO::Socket::SSL qw(SSL_VERIFY_NONE);
 use MIME::Types;
 
+binmode STDOUT, ':encoding(UTF-8)';
+binmode STDERR, ':encoding(UTF-8)';
+
 my $loop = IO::Async::Loop->new;
 my $t = Net::Async::Twitter->new(
     consumer_key    => '3XUUQDUrex9C7XtKKX38fqrST',
